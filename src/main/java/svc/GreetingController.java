@@ -1,8 +1,8 @@
-package hello;
+package svc;
 
-import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
+import caketpl.TemplateProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +27,6 @@ public class GreetingController {
     @PostMapping("/greeting")
     public String greetingPost(@RequestBody RenderRequest rr) {
         Template t = templateRepository.findById(1L).get();
-        return "Result: "+TemplateProcessor.process(t.getSource(), rr.getParams());
+        return "Result: "+ TemplateProcessor.process(t.getSource(), rr.getParams());
     }
 }

@@ -1,4 +1,4 @@
-package hello;
+package svc;
 
 public class Greeting {
 

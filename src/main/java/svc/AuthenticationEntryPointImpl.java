@@ -1,4 +1,4 @@
-//package hello;
+//package caketpl;
 //
 //import java.io.IOException;
 //import java.io.PrintWriter;
@@ -25,7 +25,7 @@
 //    @Override
 //    public void afterPropertiesSet() throws Exception {
 //        // RealmName appears in the login window (Firefox).
-//        setRealmName("hello");
+//        setRealmName("caketpl");
 //        super.afterPropertiesSet();
 //    }
 //

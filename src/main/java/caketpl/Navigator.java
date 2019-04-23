@@ -1,4 +1,4 @@
-package hello;
+package caketpl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -35,7 +35,7 @@ public class Navigator {
                 return this;
             }
 
-            Pattern patternKey = Pattern.compile("^([a-zA-Z]+)([.]?)");
+            Pattern patternKey = Pattern.compile("^([a-zA-Z0-9_]+)([.]?)");
             Pattern patternIndex = Pattern.compile("^\\[([0-9]+)\\]([.]?)");
             Matcher m;
 

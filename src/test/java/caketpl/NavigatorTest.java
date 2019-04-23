@@ -1,11 +1,10 @@
+package caketpl;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hello.Navigator;
-import hello.TemplateProcessor;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.HashMap;
 
 import org.junit.Assert;
 import org.junit.Test;
