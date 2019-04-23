@@ -24,9 +24,9 @@ public class GreetingController {
                 String.format(template, name));
     }
 
-    @PostMapping("/greeting")
-    public String greetingPost(@RequestBody RenderRequest rr) {
-        Template t = templateRepository.findById(1L).get();
-        return "Result: "+ TemplateProcessor.process(t.getSource(), rr.getParams());
-    }
+//    @PostMapping("/greeting")
+//    public String greetingPost(@RequestBody RenderRequest rr) {
+//        Template t = templateRepository.findById(1L).get();
+//        return "Result: "+ TemplateProcessor.process(t.getSource(), rr.getParams());
+//    }
 }
