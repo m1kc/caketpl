@@ -1,5 +1,6 @@
 package caketpl;
 
+// NavigatorElement represents a Navigator selector fragment.
 public class NavigatorElement {
     private String stringElement;
     private int indexElement;

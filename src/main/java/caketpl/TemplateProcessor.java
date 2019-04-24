@@ -9,8 +9,10 @@ import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// TemplateProcessor provides methods for working with templates.
 public class TemplateProcessor {
 
+    // findSelectors returns a list of all selectors mentioned in the template.
     public static String[] findSelectors(String source) throws ParseException, JsonProcessingException {
         HashSet<String> selectors = new HashSet<>();
 
@@ -28,6 +30,7 @@ public class TemplateProcessor {
         return ret;
     }
 
+    // isValid validates all selectors in a template.
     public static boolean isValid(String source) {
         try {
             String[] selectors = findSelectors(source);
@@ -42,6 +45,7 @@ public class TemplateProcessor {
         }
     }
 
+    // render renders a template with the given params.
     public static String render(String source, JsonNode params) throws ParseException, JsonProcessingException {
         Pattern r = Pattern.compile("\\$\\{(.*?)\\}");  // ${param}
         Matcher m = r.matcher(source);

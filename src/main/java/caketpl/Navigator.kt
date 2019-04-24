@@ -7,6 +7,7 @@ import java.util.ArrayList
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
+// Navigator provides methods for stateful navigation inside JSON objects.
 class Navigator(var current: JsonNode) {
 
     fun goKey(key: String): Navigator {

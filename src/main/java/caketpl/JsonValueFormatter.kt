@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.util.*
 
+// JsonValueFormatter outputs JSON values as required by the spec: 1 -> "1", [1,2,3] -> "1 2 3", otherwise as is.
 object JsonValueFormatter {
     @Throws(JsonProcessingException::class)
     fun format(value: JsonNode): String {
