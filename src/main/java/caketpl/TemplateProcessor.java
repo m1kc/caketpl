@@ -32,7 +32,7 @@ public class TemplateProcessor {
         try {
             String[] selectors = findSelectors(source);
             for (String selector : selectors) {
-                Navigator.parseTemplate(selector);
+                Navigator.Companion.parseTemplate(selector);
             }
             return true;
         } catch (ParseException ex) {
@@ -53,7 +53,7 @@ public class TemplateProcessor {
             Navigator nav = new Navigator(params);
             m.appendReplacement(
                     sb,
-                    JsonValueFormatter.format(nav.goTemplate(path).getCurrent())
+                    JsonValueFormatter.INSTANCE.format(nav.goTemplate(path).getCurrent())
             );
         }
         m.appendTail(sb);
