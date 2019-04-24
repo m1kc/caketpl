@@ -1,12 +1,17 @@
 package svc;
 
 import caketpl.TemplateProcessor;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.yaml.snakeyaml.nodes.MappingNode;
 
 import javax.validation.Valid;
 import java.util.Optional;
@@ -29,32 +34,74 @@ public class TemplateController {
                 .build();
     }
 
+    private static ObjectNode json() {
+        return new ObjectMapper().createObjectNode();
+    }
+
     // CRUD
 
-    @PostMapping("/template/create")
-    public String create(@RequestBody @Valid Template template) {
+    @GetMapping("/template/{id}")
+    public TemplateWithInfo get(@PathVariable long id) throws Exception {
+        Optional<Template> value = templateRepository.findById(id);
+
+        if (!value.isPresent()) {
+            throw new ObjectNotFoundException();
+        } else {
+            return TemplateWithInfo.from(value.get());
+        }
+    }
+
+    @PostMapping("/template")
+    public TemplateWithInfo create(@RequestBody @Valid Template template) throws Exception {
+        if (!TemplateProcessor.isValid(template.getSource())) {
+            throw new InvalidTemplateException();
+        }
+
         template = templateRepository.save(template);
-        return ""+template.getId();
+        return TemplateWithInfo.from(template);
+    }
+
+    @DeleteMapping("/template/{id}")
+    public ObjectNode delete(@PathVariable("id") long id) {
+        templateRepository.deleteById(id);
+        return json().put("result", "ok");
+    }
+
+    @PutMapping("/template/{id}")
+    public TemplateWithInfo update(@PathVariable("id") long id, @RequestBody @Valid Template newTemplate) throws Exception {
+        Optional<Template> value = templateRepository.findById(id);
+
+        if (!value.isPresent()) {
+            throw new ObjectNotFoundException();
+        }
+
+        if (!TemplateProcessor.isValid(newTemplate.getSource())) {
+            throw new InvalidTemplateException();
+        }
+
+        newTemplate.setId(id);
+        newTemplate = templateRepository.save(newTemplate);
+        return TemplateWithInfo.from(newTemplate);
     }
 
     // Rendering
 
     @PostMapping("/template/{id}/render")
-    public String render(@PathVariable("id") long id, @RequestBody JsonNode params) throws Exception {
+    public JsonNode render(@PathVariable("id") long id, @RequestBody JsonNode params) throws Exception {
         Template template = templateRepository.findById(id).orElseThrow(() -> new NotFoundException("Cannot find template"));
-        return TemplateProcessor.render(template.getSource(), params);
+        return json().put("result", TemplateProcessor.render(template.getSource(), params));
     }
 
     // Async render
 
     @PostMapping("/template/{id}/render/async")
-    public String renderAsync(@PathVariable("id") long id, @RequestBody JsonNode params) {
+    public JsonNode renderAsync(@PathVariable("id") long id, @RequestBody JsonNode params) {
         long requestID = counter.incrementAndGet();
         this.results.put(requestID, Optional.empty());
 
         new Thread(() -> {
             try {
-                Thread.sleep(5000L);
+                Thread.sleep(5000L);  // artificial delay
 
                 Template template = templateRepository.findById(id).orElseThrow(() -> new NotFoundException("Cannot find template"));
                 String result = TemplateProcessor.render(template.getSource(), params);
@@ -64,20 +111,20 @@ public class TemplateController {
             }
         }).start();
 
-        return ""+requestID;
+        return json().put("request-id", requestID);
     }
 
     @GetMapping("/template/render-result/{id}")
-    public String renderAsyncResult(@PathVariable("id") long rid) {
+    public JsonNode renderAsyncResult(@PathVariable("id") long rid) {
         Optional<String> value = this.results.getIfPresent(rid);
         if (value == null) {
-            return "Not found or expired";
+            return json().put("status", "Not found or expired");
         }
 
         if (value.isPresent()) {
-            return value.get();
+            return json().put("result", value.get()).put("status", "ok");
         } else {
-            return "In progress";
+            return json().put("status", "In progress");
         }
     }
 }

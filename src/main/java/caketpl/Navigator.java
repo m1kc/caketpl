@@ -3,6 +3,7 @@ package caketpl;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,31 +19,31 @@ public class Navigator {
     }
 
     public Navigator goKey(String key) {
-//        System.out.println("goKey: "+key);
         current = current.get(key);
         return this;
     }
 
     public Navigator goIndex(int index) {
-//        System.out.println("goIndex: "+index);
         current = current.get(index);
         return this;
     }
 
-    public Navigator goTemplate(String s) throws ParseException {
+    public static Iterable<NavigatorElement> parseTemplate(String s) throws ParseException {
+        Pattern patternKey = Pattern.compile("^([a-zA-Z0-9_]+)([.]?)");
+        Pattern patternIndex = Pattern.compile("^\\[([0-9]+)\\]([.]?)");
+        Matcher m;
+
+        ArrayList<NavigatorElement> ret = new ArrayList<>();
+
         while (true) {
             if (s.length() == 0) {
-                return this;
+                return ret;
             }
-
-            Pattern patternKey = Pattern.compile("^([a-zA-Z0-9_]+)([.]?)");
-            Pattern patternIndex = Pattern.compile("^\\[([0-9]+)\\]([.]?)");
-            Matcher m;
 
             // index navigation?
             m = patternIndex.matcher(s);
             if (m.find()) {
-                this.goIndex(Integer.parseInt(m.group(1)));
+                ret.add(new NavigatorElement(Integer.parseInt(m.group(1))));
                 s = s.substring(m.end());
                 continue;
             }
@@ -50,7 +51,7 @@ public class Navigator {
             // key navigation?
             m = patternKey.matcher(s);
             if (m.find()) {
-                this.goKey(m.group(1));
+                ret.add(new NavigatorElement(m.group(1)));
                 s = s.substring(m.end());
                 continue;
             }
@@ -58,5 +59,13 @@ public class Navigator {
             // I dunno, invalid
             throw new ParseException("Could not parse template near: `"+s+"`", 0);
         }
+    }
+
+    public Navigator goTemplate(String s) throws ParseException {
+        Iterable<NavigatorElement> elements = parseTemplate(s);
+        for (NavigatorElement el : elements) {
+            el.executeOn(this);
+        }
+        return this;
     }
 }

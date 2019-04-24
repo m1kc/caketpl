@@ -22,4 +22,12 @@ public class Template {
     public String getSource() {
         return source;
     }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
 }

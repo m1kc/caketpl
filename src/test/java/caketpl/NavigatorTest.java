@@ -110,4 +110,20 @@ public class NavigatorTest {
         );
     }
 
+
+    @Test
+    public void testNavigator8() throws IOException, ParseException {
+        String jsonString = "{`city`: {`very`: {`good`: `yes`}}}".replace('`', '"');
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode node = mapper.readTree(jsonString);
+
+        try {
+            new Navigator(node).goTemplate("FD(FS(F*F(NFD(*(*($#&@!(&(#@");
+            throw new AssertionError("Expected to throw");
+        } catch (Exception ex) {
+            return;
+        }
+    }
+
 }
