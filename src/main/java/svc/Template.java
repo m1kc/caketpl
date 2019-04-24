@@ -18,7 +18,6 @@ public class Template {
     public long getId() {
         return id;
     }
-
     public String getSource() {
         return source;
     }
@@ -26,7 +25,6 @@ public class Template {
     public void setId(long id) {
         this.id = id;
     }
-
     public void setSource(String source) {
         this.source = source;
     }
