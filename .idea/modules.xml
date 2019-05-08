@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/caketpl.iml" filepath="$PROJECT_DIR$/caketpl.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/tpl3.iml" filepath="$PROJECT_DIR$/.idea/modules/tpl3.iml" group="tpl3" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/tpl3.main.iml" filepath="$PROJECT_DIR$/.idea/modules/tpl3.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/tpl3.test.iml" filepath="$PROJECT_DIR$/.idea/modules/tpl3.test.iml" />

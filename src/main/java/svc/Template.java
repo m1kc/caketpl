@@ -1,5 +1,7 @@
 package svc;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
@@ -8,9 +10,11 @@ public class Template {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @ApiModelProperty(notes = "Auto-generated template ID")
     private long id;
 
     @NotBlank(message = "Source is mandatory")
+    @ApiModelProperty(notes = "Template source")
     private String source;
 
     // standard constructors / setters / getters / toString

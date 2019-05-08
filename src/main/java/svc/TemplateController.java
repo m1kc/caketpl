@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 
 @RestController
+@Api(value="Templates")
 public class TemplateController {
 
     @Autowired
@@ -40,6 +43,7 @@ public class TemplateController {
     // CRUD
 
     @GetMapping("/template/{id}")
+    @ApiOperation(value = "Get template by ID")
     public TemplateWithInfo get(@PathVariable long id) throws Exception {
         Optional<Template> value = templateRepository.findById(id);
 
@@ -51,6 +55,7 @@ public class TemplateController {
     }
 
     @PostMapping("/template")
+    @ApiOperation(value = "Create template")
     public TemplateWithInfo create(@RequestBody @Valid Template template) throws Exception {
         if (!TemplateProcessor.isValid(template.getSource())) {
             throw new InvalidTemplateException();
@@ -61,12 +66,14 @@ public class TemplateController {
     }
 
     @DeleteMapping("/template/{id}")
+    @ApiOperation(value = "Delete template")
     public ObjectNode delete(@PathVariable("id") long id) {
         templateRepository.deleteById(id);
         return json().put("result", "ok");
     }
 
     @PutMapping("/template/{id}")
+    @ApiOperation(value = "Change template")
     public TemplateWithInfo update(@PathVariable("id") long id, @RequestBody @Valid Template newTemplate) throws Exception {
         Optional<Template> value = templateRepository.findById(id);
 
@@ -86,6 +93,7 @@ public class TemplateController {
     // Rendering
 
     @PostMapping("/template/{id}/render")
+    @ApiOperation(value = "Render template")
     public JsonNode render(@PathVariable("id") long id, @RequestBody JsonNode params) throws Exception {
         Template template = templateRepository.findById(id).orElseThrow(() -> new NotFoundException("Cannot find template"));
         return json().put("result", TemplateProcessor.render(template.getSource(), params));
@@ -94,6 +102,7 @@ public class TemplateController {
     // Async render
 
     @PostMapping("/template/{id}/render/async")
+    @ApiOperation(value = "Render template asynchronously")
     public JsonNode renderAsync(@PathVariable("id") long id, @RequestBody JsonNode params) {
         long requestID = counter.incrementAndGet();
         this.results.put(requestID, Optional.empty());
@@ -114,6 +123,7 @@ public class TemplateController {
     }
 
     @GetMapping("/template/render-result/{id}")
+    @ApiOperation(value = "Query results of async render")
     public JsonNode renderAsyncResult(@PathVariable("id") long rid) {
         Optional<String> value = this.results.getIfPresent(rid);
         if (value == null) {
